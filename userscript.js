@@ -8,8 +8,8 @@
 
 
 var accounts = {
-  123456789000: "Example Dev",
-  234567890000: "Example Prod",
+  "123456789000": "Example Dev",
+  "234567890000": "Example Prod",
 };
 
 var keys = Object.keys(accounts);
