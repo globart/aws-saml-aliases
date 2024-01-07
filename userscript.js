@@ -6,7 +6,6 @@
 // @version     1.0
 // ==/UserScript==
 
-
 var accounts = {
   "123456789000": "Example Dev",
   "234567890000": "Example Prod",
@@ -24,7 +23,7 @@ for (let i = 0; i < keys.length; i++) {
     if (temp[j].textContent.includes(contains)) {
       var account = document.createElement("div");
       account.className = "saml-account-name";
-      account.textContent = `Account: ${accounts[key]} (${key})`;
+      account.innerHTML = `${accounts[key]} <span class="account-number">#${key}</span>`;
       temp[j].outerHTML = account.outerHTML;
     }
   }
