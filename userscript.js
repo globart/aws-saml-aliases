@@ -3,8 +3,10 @@
 // @description  Adds aliases in AWS SAML page to accounts that miss them
 // @match       https://signin.aws.amazon.com/saml
 // @match       https://*.signin.aws.amazon.com/sessions/selector*
+// @match       https://*.signin.aws.amazon.com/sessions/limit*
+// @match       https://*.signin.aws.amazon.com/switchrole*
 // @grant       none
-// @version     1.1
+// @version     1.2
 // ==/UserScript==
 
 var accounts = {
@@ -57,9 +59,39 @@ function updateSessionSelectorPage() {
   });
 }
 
+function updateStrongElements() {
+  var strongElements = document.querySelectorAll('strong');
+  if (strongElements.length === 0) {
+    setTimeout(updateStrongElements, 50); // Retry after 50ms
+    return;
+  }
+  console.log(strongElements);
+  Array.from(strongElements)
+    .forEach(strongEl => {
+      var originalText = strongEl.outerText.trim();
+      if (!/^[\d-]+$/.test(originalText)) return; // Only process numbers and dashes
+
+      var accountId = originalText.replace(/-/g, ''); // Remove dashes
+      console.log(accountId);
+      if (accounts[accountId]) {
+        var spanElement = document.createElement('span');
+        spanElement.textContent = ` (${originalText})`;
+
+        strongEl.textContent = `${accounts[accountId]}`; // Replace text with account name
+        strongEl.after(spanElement);
+
+      }
+    });
+}
+
+
 // Run appropriate function based on the page
 if (window.location.pathname.includes("/saml")) {
   updateSAMLPage();
 } else if (window.location.pathname.includes("/sessions/selector")) {
   updateSessionSelectorPage();
+} else if (window.location.pathname.includes("/sessions/limit")) {
+  updateStrongElements();
+} else if (window.location.pathname.includes("/switchrole")) {
+  updateStrongElements();
 }
